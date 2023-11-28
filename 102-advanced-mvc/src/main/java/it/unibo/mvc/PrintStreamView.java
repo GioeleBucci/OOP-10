@@ -1,6 +1,3 @@
-/**
- * 
- */
 package it.unibo.mvc;
 
 import java.io.File;
@@ -13,49 +10,54 @@ import java.io.PrintStream;
  */
 public final class PrintStreamView implements DrawNumberView {
 
-    private final PrintStream out;
+  private final PrintStream out;
 
-    /**
-     * Builds a new PrintStreamView.
-     *
-     * @param stream the {@link PrintStream} where to write
+  /**
+   * Builds a new PrintStreamView.
+   *
+   * @param stream the {@link PrintStream} where to write
+   */
+  public PrintStreamView(final PrintStream stream) {
+    out = stream;
+  }
+
+  /**
+   * Builds a {@link PrintStreamView} that writes on file, given a path.
+   * 
+   * @param path a file path
+   * @throws FileNotFoundException
+   */
+  public PrintStreamView(final String path) throws FileNotFoundException {
+    out = new PrintStream(new FileOutputStream(new File(path)));
+  }
+
+  @Override
+  public void setObserver(final DrawNumberViewObserver observer) {
+    /*
+     * This UI is output only.
      */
-    public PrintStreamView(final PrintStream stream) {
-        out = stream;
-    }
+  }
 
-    /**
-     * Builds a {@link PrintStreamView} that writes on file, given a path.
-     * 
-     * @param path a file path
-     * @throws FileNotFoundException 
+  @Override
+  public void start() {
+    /*
+     * PrintStreams are always ready.
      */
-    public PrintStreamView(final String path) throws FileNotFoundException {
-        out = new PrintStream(new FileOutputStream(new File(path)));
-    }
+  }
 
-    @Override
-    public void setObserver(final DrawNumberViewObserver observer) {
-        /*
-         * This UI is output only.
-         */
-    }
+  @Override
+  public void numberIncorrect() {
+    out.println("You must enter a number");
+  }
 
-    @Override
-    public void start() {
-        /*
-         * PrintStreams are always ready.
-         */
-    }
+  @Override
+  public void result(final DrawResult res) {
+    out.println(res.getDescription());
+  }
 
-    @Override
-    public void numberIncorrect() {
-        out.println("You must enter a number");
-    }
-
-    @Override
-    public void result(final DrawResult res) {
-        out.println(res.getDescription());
-    }
+  @Override
+  public void displayError(String message) {
+    out.println(message);
+  }
 
 }
