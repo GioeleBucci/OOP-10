@@ -36,8 +36,8 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
       String line;
       while ((line = br.readLine()) != null) {
         var pair = Arrays.asList(line.split(":"));
-        String name = pair.get(0).strip();
-        int value = Integer.parseInt(pair.get(1).strip());
+        String name = pair.get(0).trim();
+        int value = Integer.parseInt(pair.get(1).trim());
         switch (name) {
           case "minimum" -> configBuilder.setMin(value);
           case "maximum" -> configBuilder.setMax(value);
