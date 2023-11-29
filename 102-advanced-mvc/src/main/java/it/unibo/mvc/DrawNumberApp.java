@@ -6,9 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  */
@@ -34,23 +32,21 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
       throw new FileNotFoundException("Config file does not exist");
     }
     final Configuration.Builder configBuilder = new Configuration.Builder();
-    final Map<String, String> configMap = new HashMap<>();
     try (BufferedReader br = new BufferedReader(new FileReader(configFile))) {
       String line;
       while ((line = br.readLine()) != null) {
         var pair = Arrays.asList(line.split(":"));
-        configMap.put(pair.get(0).trim(), pair.get(1).trim());
-      }
-      for (String key : configMap.keySet()) {
-        switch (key) {
-          case "minimum" -> configBuilder.setMin(Integer.parseInt(configMap.get(key)));
-          case "maximum" -> configBuilder.setMax(Integer.parseInt(configMap.get(key)));
-          case "attempts" -> configBuilder.setAttempts(Integer.parseInt(configMap.get(key)));
-          default -> displayErrorToAllViews("Invalid syntax in config file:\n" + key + " does not exist.");
+        String name = pair.get(0).strip();
+        int value = Integer.parseInt(pair.get(1).strip());
+        switch (name) {
+          case "minimum" -> configBuilder.setMin(value);
+          case "maximum" -> configBuilder.setMax(value);
+          case "attempts" -> configBuilder.setAttempts(value);
+          default -> displayErrorToAllViews("Invalid syntax in config file:\n" + name + " does not exist");
         }
       }
-    } catch (IOException e) {
-      displayErrorToAllViews(e.getMessage());
+    } catch (IOException | NumberFormatException e) {
+      displayErrorToAllViews("Error: " + e.getMessage());
     }
     /*
      * Side-effect proof
@@ -94,7 +90,7 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
    * @throws FileNotFoundException
    */
   public static void main(final String... args) throws FileNotFoundException {
-    new DrawNumberApp(new File("src/main/resources/config.yml"), 
+    new DrawNumberApp(new File("src/main/resources/config.yml"),
         new DrawNumberViewImpl(),
         new DrawNumberViewImpl(),
         new PrintStreamView(System.out),
